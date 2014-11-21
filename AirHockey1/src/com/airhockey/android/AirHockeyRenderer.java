@@ -28,6 +28,7 @@ import android.content.Context;
 import android.opengl.GLSurfaceView.Renderer;
 
 public class AirHockeyRenderer implements Renderer {
+    private int program;
     private final Context context;
     private static final int BYTES_PER_FLOAT = 4;
     private final FloatBuffer vertexData;
