@@ -5,7 +5,7 @@
  * courses, books, articles, and the like. Contact us if you are in doubt.
  * We make no guarantees that this code is fit for any purpose. 
  * Visit http://www.pragmaticprogrammer.com/titles/kbogla for more book information.
-***/
+ ***/
 package com.firstopenglproject.android;
 
 import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
@@ -41,7 +41,7 @@ public class FirstOpenGLProjectRenderer implements Renderer {
     @Override
     public void onSurfaceChanged(GL10 glUnused, int width, int height) {
         // Set the OpenGL viewport to fill the entire surface.
-        glViewport(0, 0, width, height);
+        glViewport(100, 100, width - 200, height - 200);
     }
 
     /**
