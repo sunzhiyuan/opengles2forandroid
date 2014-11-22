@@ -86,6 +86,7 @@ public class AirHockeyRenderer implements Renderer {
         aPositionLocation = glGetAttribLocation(program, A_POSITION);
         vertexData.position(0);
         glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, 0, vertexData);
+        glEnableVertexAttribArray(aPositionLocation);
         
     }
 
