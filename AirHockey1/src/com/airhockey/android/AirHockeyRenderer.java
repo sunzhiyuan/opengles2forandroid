@@ -43,16 +43,16 @@ public class AirHockeyRenderer implements Renderer {
         float[] talbeVertices = { 0f, 0f, 0f, 14f, 9f, 14f, 9f, 0f };
         float[] tableVerticesWithTriangles = {
             // Triangle 1
-            0f, 0f, 9f, 14f, 0f, 14f,
+            -0.5f, -0.5f, 0.5f, 0.5f, -0.5f, 0.5f,
 
             // Triangle 2
-            0f, 0f, 9f, 0f, 9f, 14f,
+            -0.5f, -0.5f, 0.5f, -0.5f, 0.5f, 0.5f,
 
             // Line 1
-            0f, 7f, 9f, 7f,
+            -0.5f, 0f, 0.5f, 0f,
 
             // Mallets
-            4.5f, 2f, 4.5f, 12f };
+            0f, -0.25f, 0f, 0.25f };
         vertexData =
             ByteBuffer
                 .allocateDirect(
@@ -67,7 +67,7 @@ public class AirHockeyRenderer implements Renderer {
         // Set the background clear color to red. The first component is
         // red, the second is green, the third is blue, and the last
         // component is alpha, which we don't use in this lesson.
-        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         String vertexShaderSource =
             TextResourceReader.readTextFileFromResource(context,
                 R.raw.simple_vertex_shader);
