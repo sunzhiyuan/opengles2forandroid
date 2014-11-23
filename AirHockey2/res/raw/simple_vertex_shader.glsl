@@ -1,7 +1,7 @@
 attribute vec4 a_Position;
 attribute vec4 a_Color;
 
-varyring vec4 v_Color;
+varying vec4 v_Color;
 
 void main()
 {
