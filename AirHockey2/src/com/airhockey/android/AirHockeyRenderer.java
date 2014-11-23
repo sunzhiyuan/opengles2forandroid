@@ -28,6 +28,8 @@ import com.airhockey.android.util.ShaderHelper;
 import com.airhockey.android.util.TextResourceReader;
 
 public class AirHockeyRenderer implements Renderer {
+    private static final String A_COLOR = "a_Color";
+    private static final int COLOR_COMPONENT_COUNT = 3;
     private static final String A_POSITION = "a_Position";
     private int aPositionLocation;
     private static final String U_COLOR = "u_Color";
@@ -37,7 +39,9 @@ public class AirHockeyRenderer implements Renderer {
     private static final int BYTES_PER_FLOAT = 4;
     private final FloatBuffer vertexData;
     private static final int POSITION_COMPONENT_COUNT = 2;
-
+    private static final int STRIDE =
+        (POSITION_COMPONENT_COUNT + COLOR_COMPONENT_COUNT) * BYTES_PER_FLOAT;
+    private int aColorLocation;
     public AirHockeyRenderer(Context context) {
         this.context = context;
         float[] talbeVertices = { 0f, 0f, 0f, 14f, 9f, 14f, 9f, 0f };
@@ -87,12 +91,15 @@ public class AirHockeyRenderer implements Renderer {
         }
         glUseProgram(program);
         uColorLocation = glGetUniformLocation(program, U_COLOR);
+        aColorLocation = glGetAttribLocation(program, A_COLOR);
         aPositionLocation = glGetAttribLocation(program, A_POSITION);
         vertexData.position(0);
         glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT,
-            GL_FLOAT, false, 0, vertexData);
+            GL_FLOAT, false, STRIDE, vertexData);
+        vertexData.position(COLOR_COMPONENT_COUNT);
+        glVertexAttribPointer(aColorLocation, COLOR_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, vertexData);
         glEnableVertexAttribArray(aPositionLocation);
-
+//        glEnableVertexAttribArray(aColorLocation);
     }
 
     /**
@@ -122,11 +129,11 @@ public class AirHockeyRenderer implements Renderer {
         glClear(GL_COLOR_BUFFER_BIT);
         glUniform4f(uColorLocation, 1.0f, 1.0f, 1.0f, 1.0f);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
-        glUniform4f(uColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+//        glUniform4f(uColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
         glDrawArrays(GL_LINES, 6, 2);
-        glUniform4f(uColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
+//        glUniform4f(uColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);
         glDrawArrays(GL_POINTS, 8, 1);
-        glUniform4f(uColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
+//        glUniform4f(uColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);
         glDrawArrays(GL_POINTS, 9, 1);
     }
 }
