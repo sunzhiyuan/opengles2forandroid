@@ -23,6 +23,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView.Renderer;
+import android.util.Log;
 
 import com.airhockey.android.util.LoggerConfig;
 import com.airhockey.android.util.ShaderHelper;
@@ -126,6 +127,7 @@ public class AirHockeyRenderer implements Renderer {
             } else {
                 orthoM(projectionMatrix, 0, -1f, 1f, -aspectRatio, aspectRatio, -1f, 1f);
             }
+            Log.v(U_MATRIIX,"aspectRatio is :" + aspectRatio + "width: "+width + "; height: " + height );
             
     }
 
