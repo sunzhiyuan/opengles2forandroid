@@ -93,7 +93,7 @@ public class AirHockeyRenderer implements Renderer {
         glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT,
             GL_FLOAT, false, STRIDE, vertexData);
         glEnableVertexAttribArray(aPositionLocation);
-        vertexData.position(COLOR_COMPONENT_COUNT);
+        vertexData.position(POSITION_COMPONENT_COUNT);
         glVertexAttribPointer(aColorLocation, COLOR_COMPONENT_COUNT, GL_FLOAT, false, STRIDE, vertexData);
         glEnableVertexAttribArray(aColorLocation);
     }
