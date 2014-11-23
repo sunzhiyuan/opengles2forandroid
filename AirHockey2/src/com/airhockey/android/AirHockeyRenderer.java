@@ -13,6 +13,7 @@ import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glClearColor;
 import static android.opengl.GLES20.glViewport;
 import static android.opengl.GLES20.*;
+import static android.opengl.Matrix.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
@@ -28,6 +29,9 @@ import com.airhockey.android.util.ShaderHelper;
 import com.airhockey.android.util.TextResourceReader;
 
 public class AirHockeyRenderer implements Renderer {
+    private static final String U_MATRIIX = "u_Matrix";
+    private final float [] projectionMatrix = new float[16];
+    private int uMatrixLocation;
     private static final String A_COLOR = "a_Color";
     private static final int COLOR_COMPONENT_COUNT = 3;
     private static final String A_POSITION = "a_Position";
@@ -89,6 +93,7 @@ public class AirHockeyRenderer implements Renderer {
         glUseProgram(program);
         aColorLocation = glGetAttribLocation(program, A_COLOR);
         aPositionLocation = glGetAttribLocation(program, A_POSITION);
+        uMatrixLocation = glGetUniformLocation(program, U_MATRIIX);
         vertexData.position(0);
         glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT,
             GL_FLOAT, false, STRIDE, vertexData);
@@ -113,6 +118,15 @@ public class AirHockeyRenderer implements Renderer {
     public void onSurfaceChanged(GL10 glUnused, int width, int height) {
         // Set the OpenGL viewport to fill the entire surface.
         glViewport(0, 0, width, height);
+        final float aspectRatio = width > height?
+            (float)width / (float)height:
+            (float)height/ (float)width;
+            if (width > height) {
+                orthoM(projectionMatrix, 0, -aspectRatio, aspectRatio, -1f, 1f, -1f, 1f);
+            } else {
+                orthoM(projectionMatrix, 0, -1f, 1f, -aspectRatio, aspectRatio, -1f, 1f);
+            }
+            
     }
 
     /**
@@ -123,6 +137,7 @@ public class AirHockeyRenderer implements Renderer {
     public void onDrawFrame(GL10 glUnused) {
         // Clear the rendering surface.
         glClear(GL_COLOR_BUFFER_BIT);
+        glUniformMatrix4fv(uMatrixLocation, 1, false, projectionMatrix, 0);
         glDrawArrays(GL_TRIANGLE_FAN, 0, 6);
         glDrawArrays(GL_LINES, 6, 2);
         glDrawArrays(GL_POINTS, 8, 1);
