@@ -26,12 +26,14 @@ import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
 
 import com.airhockey.android.util.LoggerConfig;
+import com.airhockey.android.util.MatrixHelper;
 import com.airhockey.android.util.ShaderHelper;
 import com.airhockey.android.util.TextResourceReader;
 
 public class AirHockeyRenderer implements Renderer {
     private static final String U_MATRIIX = "u_Matrix";
     private final float [] projectionMatrix = new float[16];
+    private final float [] modelMatrix = new float [16];
     private int uMatrixLocation;
     private static final String A_COLOR = "a_Color";
     private static final int COLOR_COMPONENT_COUNT = 3;
@@ -119,16 +121,14 @@ public class AirHockeyRenderer implements Renderer {
     public void onSurfaceChanged(GL10 glUnused, int width, int height) {
         // Set the OpenGL viewport to fill the entire surface.
         glViewport(0, 0, width, height);
-        final float aspectRatio = width > height?
-            (float)width / (float)height:
-            (float)height/ (float)width;
-            if (width > height) {
-                orthoM(projectionMatrix, 0, -aspectRatio, aspectRatio, -1f, 1f, -1f, 1f);
-            } else {
-                orthoM(projectionMatrix, 0, -1f, 1f, -aspectRatio, aspectRatio, -1f, 1f);
-            }
-            Log.v(U_MATRIIX,"aspectRatio is :" + aspectRatio + "width: "+width + "; height: " + height );
-            
+        MatrixHelper.perspectiveM(projectionMatrix, 45, (float)width/(float)height, 1f, 10f);
+        setIdentityM(modelMatrix, 0);
+        translateM(modelMatrix,0,0f,0f,-2.5f);
+        rotateM(modelMatrix, 0, -60f, 1f, 0f, 0f);
+        final float [] temp = new float[16];
+        multiplyMM(temp, 0, projectionMatrix, 0, modelMatrix,0);
+        System.arraycopy(temp, 0, projectionMatrix, 0, temp.length);
+        
     }
 
     /**
