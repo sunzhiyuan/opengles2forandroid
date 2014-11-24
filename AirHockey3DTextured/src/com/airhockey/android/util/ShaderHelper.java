@@ -2,6 +2,7 @@ package com.airhockey.android.util;
 
 import static android.opengl.GLES20.GL_VERTEX_SHADER;
 import static android.opengl.GLES20.*;
+import android.R.integer;
 import android.util.Log;
 
 public class ShaderHelper {
@@ -82,5 +83,17 @@ public class ShaderHelper {
         Log.v(TAG, "Results of validating program:" + validateStatus[0]
             + "\nLog" + glGetProgramInfoLog(programObjectId));
         return validateStatus[0] != 0;
+    }
+    
+    public static int buildProgram(String vertexShaderSource, String fragmentShaderSource) {
+        int program;
+        int vertexShader = compileVertexShader(vertexShaderSource);
+        int framgmentShader = compileFragmentShader(fragmentShaderSource);
+        
+        program = linkProgram(vertexShader, framgmentShader);
+        if(LoggerConfig.ON){
+            validateProgram(program);
+        }
+        return program;
     }
 }
