@@ -9,16 +9,16 @@ import static android.opengl.GLES20.*;
 public class TextureShaderProgram extends ShaderProgram {
     private final int uMatrixLocation;
     private final int uTextureUnitLocation;
-    private final int aPostionLocation;
-    private final int aTextureCoodinatesLocation;
+    private final int aPositionLocation;
+    private final int aTextureCoordinatesLocation;
     
     public TextureShaderProgram(Context context) {
         // TODO Auto-generated constructor stub
         super(context, R.raw.texture_vertex_shader, R.raw.simple_fragment_shader);
         uMatrixLocation = glGetUniformLocation(program, U_MATRIX);
         uTextureUnitLocation = glGetAttribLocation(program, U_TEXTURE_UNIT);
-        aPostionLocation = glGetAttribLocation(program, A_POSITION);
-        aTextureCoodinatesLocation = glGetAttribLocation(program, A_TEXTURE_COORDINATES);
+        aPositionLocation = glGetAttribLocation(program, A_POSITION);
+        aTextureCoordinatesLocation = glGetAttribLocation(program, A_TEXTURE_COORDINATES);
     }
     public void setUniforms(float [] matrix, int textureId) {
         glUniformMatrix4fv(uMatrixLocation, 1, false, matrix, 0);
@@ -27,9 +27,9 @@ public class TextureShaderProgram extends ShaderProgram {
         glUniform1i(uTextureUnitLocation, 0);
     }
     public int getPositionAttributeLocation() {
-        return aPostionLocation;
+        return aPositionLocation;
     }
     public int getTextureCoordinatesAttributeLocation() {
-        return aTextureCoodinatesLocation;
+        return aTextureCoordinatesLocation;
     }
 }
