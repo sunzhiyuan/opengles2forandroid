@@ -37,7 +37,7 @@ public class TextureHelper {
         glBindTexture(GL_TEXTURE_2D, textureObjectIds[0]);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        texImage2D(GL_TEXTURE, 0, bitmap, 0);
+        texImage2D(GL_TEXTURE_2D, 0, bitmap, 0);
         bitmap.recycle();
         glGenerateMipmap(GL_TEXTURE_2D);
         glBindTexture(GL_TEXTURE_2D, 0);
