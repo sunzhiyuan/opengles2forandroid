@@ -21,12 +21,12 @@ public class Table {
         vertexArray =new VertexArray(VERTEX_DATA);
     }
     public void bindData(TextureShaderProgram textureProgram) {
-        vertexArray.setVerTexAttribPointer(0,
+        vertexArray.setVertexAttribPointer(0,
             textureProgram.getPositionAttributeLocation(), 
             POSITION_COMPONENT_COUNT,
             STRIDE);
 
-        vertexArray.setVerTexAttribPointer(
+        vertexArray.setVertexAttribPointer(
             POSITION_COMPONENT_COUNT,
             textureProgram.getTextureCoordinatesAttributeLocation(),
             TEXTURE_COORDINATES_COMPONENT_COUNT,

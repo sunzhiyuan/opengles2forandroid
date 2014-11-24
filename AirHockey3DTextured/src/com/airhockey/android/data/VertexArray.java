@@ -14,7 +14,7 @@ public class VertexArray {
             .asFloatBuffer()
             .put(vertexData);
     }
-    public void setVerTexAttribPointer(int dataOffset, int attributeLocation, int componentCount, int stride) {
+    public void setVertexAttribPointer(int dataOffset, int attributeLocation, int componentCount, int stride) {
         floatBuffer.position(dataOffset);
         glVertexAttribPointer(attributeLocation, componentCount, GL_FLOAT, false, stride, floatBuffer);
         glEnableVertexAttribArray(attributeLocation);
