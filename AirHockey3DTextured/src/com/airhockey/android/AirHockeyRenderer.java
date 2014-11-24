@@ -23,7 +23,6 @@ import javax.microedition.khronos.opengles.GL10;
 
 import android.content.Context;
 import android.opengl.GLSurfaceView.Renderer;
-import android.util.Log;
 
 import com.airhockey.android.util.LoggerConfig;
 import com.airhockey.android.util.MatrixHelper;

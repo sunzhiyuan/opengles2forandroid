@@ -2,7 +2,6 @@ package com.airhockey.android.util;
 
 import static android.opengl.GLES20.GL_VERTEX_SHADER;
 import static android.opengl.GLES20.*;
-import android.R.integer;
 import android.util.Log;
 
 public class ShaderHelper {
