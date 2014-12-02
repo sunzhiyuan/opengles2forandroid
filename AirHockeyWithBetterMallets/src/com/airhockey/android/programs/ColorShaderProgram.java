@@ -1,26 +1,33 @@
 package com.airhockey.android.programs;
+
 import static android.opengl.GLES20.*;
 
 import com.airhockey.android.R;
 
 import android.content.Context;
-public class ColorShaderProgram extends ShaderProgram{
+
+public class ColorShaderProgram extends ShaderProgram {
     private final int uMatrixLocation;
     private final int aPostionLocation;
-    private final int aColorLocation;
-    public ColorShaderProgram(Context context){
+    private final int uColorLocation;
+
+    public ColorShaderProgram(Context context) {
         super(context, R.raw.simple_vertex_shader, R.raw.simple_fragment_shader);
         uMatrixLocation = glGetUniformLocation(program, U_MATRIX);
         aPostionLocation = glGetAttribLocation(program, A_POSITION);
-        aColorLocation = glGetAttribLocation(program, A_COLOR);
+        uColorLocation = glGetAttribLocation(program, U_COLOR);
     }
-    public void setUniforms(float[] matrix) {
+
+    public void setUniforms(float[] matrix, float r, float g, float b) {
         glUniformMatrix4fv(uMatrixLocation, 1, false, matrix, 0);
+        glUniform4f(uColorLocation, r, g, b, 1f);
     }
+
     public int getPositionAttributeLocation() {
         return aPostionLocation;
     }
     public int getColorAttributeLocation() {
-        return aColorLocation;
+        return uColorLocation;
     }
+
 }
