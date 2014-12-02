@@ -52,10 +52,12 @@ public class ObjectBuilder {
     }
 
     private void appendCircle(Circle circle, int numPoints) {
+        final int startVertex = offset / FLOATS_PER_VERTEX;
+        final int numVertices = sizeOfCircleInVertices(numPoints);
         vertexData[offset++] = circle.center.x;
         vertexData[offset++] = circle.center.y;
         vertexData[offset++] = circle.center.z;
-        for (int i = 0; i < numPoints; i++) {
+        for (int i = 0; i <= numPoints; i++) {
             float angleInRadians =
                 ((float) i / (float) numPoints) * ((float) Math.PI * 2f);
             vertexData[offset++] =
@@ -64,8 +66,6 @@ public class ObjectBuilder {
             vertexData[offset++] =
                 circle.center.z + circle.radius * FloatMath.sin(angleInRadians);
 
-            final int startVertex = offset / FLOATS_PER_VERTEX;
-            final int numVertices = sizeOfCircleInVertices(numPoints);
             drawList.add(new DrawCommand() {
                 @Override
                 public void draw() {
@@ -81,7 +81,7 @@ public class ObjectBuilder {
         final int numVertex = sizeOfOpenCylinderInVertices(numPoints);
         final float yStart = cylinder.center.y - (cylinder.height / 2f);
         final float yEnd = cylinder.center.y + (cylinder.height / 2f);
-        for (int i = 0; i < numPoints; i++) {
+        for (int i = 0; i <= numPoints; i++) {
             float angleInRadians =
                 ((float) i / (float) numPoints) * ((float) Math.PI * 2f);
             float xPosition =
@@ -101,7 +101,7 @@ public class ObjectBuilder {
                 @Override
                 public void draw() {
                     // TODO Auto-generated method stub
-                    glDrawArrays(GL_TRIANGLE_FAN, startVertex, numVertex);
+                    glDrawArrays(GL_TRIANGLE_STRIP, startVertex, numVertex);
                 }
             });
         }
@@ -138,7 +138,7 @@ public class ObjectBuilder {
         float handleHeight = height * 0.75f;
         float handleRadius = radius / 3f;
         Circle handleCircle =
-            new Circle(center.translateY(height*0.5f), handleRadius);
+            new Circle(center.translateY(height * 0.5f), handleRadius);
         Cylinder handleCylinder =
             new Cylinder(center.translateY(-handleHeight / 2f), handleRadius,
                 handleHeight);
