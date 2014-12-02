@@ -140,7 +140,7 @@ public class ObjectBuilder {
         Circle handleCircle =
             new Circle(center.translateY(height * 0.5f), handleRadius);
         Cylinder handleCylinder =
-            new Cylinder(center.translateY(-handleHeight / 2f), handleRadius,
+            new Cylinder(handleCircle.center.translateY(-handleHeight / 2f), handleRadius,
                 handleHeight);
         builder.appendCircle(handleCircle, numPoints);
         builder.appendOpenCylinder(handleCylinder, numPoints);
