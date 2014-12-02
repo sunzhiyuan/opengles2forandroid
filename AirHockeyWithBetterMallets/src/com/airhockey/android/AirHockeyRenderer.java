@@ -71,6 +71,7 @@ public class AirHockeyRenderer implements Renderer {
         glClearColor(0f, 0f, 0f, 0f);
         table = new Table();
         mallet = new Mallet(0.08f,0.15f,32);
+        puck = new Puck(0.06f, 0.02f, 32);
         textureProgram = new TextureShaderProgram(context);
         colorProgram = new ColorShaderProgram(context);
         texture = TextureHelper.loadTexture(context, R.drawable.air_hockey_surface);
