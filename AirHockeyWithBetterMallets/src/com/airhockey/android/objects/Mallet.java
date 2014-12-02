@@ -22,7 +22,7 @@ public class Mallet {
     }
     public void bindData(ColorShaderProgram colorProgram) {
         vertexArray.setVertexAttribPointer(0,
-            colorProgram.getColorAttributeLocation(),
+            colorProgram.getPositionAttributeLocation(),
             POSITION_COMPONENT_COUNT,
             0);
     }

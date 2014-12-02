@@ -27,7 +27,7 @@ public class Puck {
 
     public void bindData(ColorShaderProgram colorProgram) {
         vertexArray.setVertexAttribPointer(0,
-            colorProgram.getColorAttributeLocation(), POSITION_COMPONENT_COUNT,
+            colorProgram.getPositionAttributeLocation(), POSITION_COMPONENT_COUNT,
             0);
     }
     public void draw() {
