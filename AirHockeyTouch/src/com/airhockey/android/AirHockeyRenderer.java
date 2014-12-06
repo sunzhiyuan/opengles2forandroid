@@ -32,9 +32,11 @@ import com.airhockey.android.objects.Table;
 import com.airhockey.android.programs.ColorShaderProgram;
 import com.airhockey.android.programs.TextureShaderProgram;
 import com.airhockey.android.util.Geometry;
+import com.airhockey.android.util.Geometry.Plane;
 import com.airhockey.android.util.Geometry.Point;
 import com.airhockey.android.util.Geometry.Ray;
 import com.airhockey.android.util.Geometry.Sphere;
+import com.airhockey.android.util.Geometry.Vector;
 import com.airhockey.android.util.MatrixHelper;
 import com.airhockey.android.util.TextureHelper;
 
@@ -126,7 +128,7 @@ public class AirHockeyRenderer implements Renderer {
         positionObjectInScene(0f, mallet.height / 2f, 0.4f);
         colorProgram.setUniforms(modelViewProjectionMatrix, 0f, 0f, 1f);
         mallet.draw();
-        positionObjectInScene(0f, puck.height / 2f, 0f);
+        positionObjectInScene(blueMalletPosition.x,blueMalletPosition.y,blueMalletPosition.z);
         colorProgram.setUniforms(modelViewProjectionMatrix, 0.8f, 0.8f, 1f);
         puck.bindData(colorProgram);
         puck.draw();
@@ -161,6 +163,11 @@ public class AirHockeyRenderer implements Renderer {
         vector[2] /= vector[3];
     }
     public void handleTouchDrag(float normalizedX, float normalizedY) {
-
+        if (malletPressed) {
+            Ray ray = convertNormalized2DPointToRay(normalizedX, normalizedY);
+            Plane plane = new Plane(new Point(0, 0, 0), new Vector(0, 1, 0));
+            Point touchedPoint = Geometry.intersectionPoint(ray, plane);
+            blueMalletPosition = new Point(touchedPoint.x, mallet.height/2f, touchedPoint.z);
+        }
     }
 }

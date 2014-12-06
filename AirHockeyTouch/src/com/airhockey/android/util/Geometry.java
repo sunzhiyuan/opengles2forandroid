@@ -2,6 +2,11 @@ package com.airhockey.android.util;
 
 import java.util.Vector;
 
+import com.airhockey.android.util.Geometry.Point;
+
+import android.util.FloatMath;
+import android.view.ViewDebug.FlagToString;
+
 
 
 
@@ -17,6 +22,9 @@ public class Geometry {
 
         public Point translateY(float distance) {
             return new Point(x, y + distance, z);
+        }
+        public Point translate(Vector vector) {
+            return new Point(x+vector.x, y+vector.y, z+vector.z);
         }
     }
 
@@ -60,6 +68,20 @@ public class Geometry {
             this.y = y;
             this.z = z;
         }
+        public float length() {
+            return FloatMath.sqrt(x*x+y*y+z*z);
+        }
+        public Vector crossProduct(Vector other) {
+            return new Vector((y*other.z)-(z*other.y), (z*other.x)-(x*other.z), (x*other.y)-(y*other.x));
+        }
+        public float dotProduct(Vector other) {
+            return x*other.x
+                +y*other.y
+                +z*other.z;
+        }
+        public Vector scale(float f) {
+            return new Vector(x*f, y*f, z*f);
+        }
     }
     public static Vector vectorBetween(Point from, Point to){
         return new Vector(to.x-from.x,
@@ -73,5 +95,30 @@ public class Geometry {
             this.center = point;
             this.radius = radius;
         }
+    }
+    public static boolean intersects(Sphere sphere, Ray ray){
+        return distanceBetween(sphere.center,ray)<sphere.radius;
+    }
+    public static float distanceBetween(Point point,Ray ray){
+        Vector p1ToPoint = vectorBetween(ray.point, point);
+        Vector p2ToPoint = vectorBetween(ray.point.translate(ray.vector),point);
+        float areaOfTriangleTimeTwo = p1ToPoint.crossProduct(p2ToPoint).length();
+        float lengthOfbBase = ray.vector.length();
+        float distanceFromPointToRay = areaOfTriangleTimeTwo/lengthOfbBase;
+        return distanceFromPointToRay;
+    }
+    public static class Plane {
+        public final Point point;
+        public final Vector normal;
+        public Plane(Point point, Vector normal){
+            this.point = point;
+            this.normal = normal;
+        }
+    }
+    public static Point intersectionPoint(Ray ray,Plane plane) {
+        Vector rayToPlaneVector = vectorBetween(ray.point, plane.point);
+        float scaleFactor = rayToPlaneVector.dotProduct(plane.normal);
+        Point intersectPoint = ray.point.translate(ray.vector.scale(scaleFactor));
+        return intersectPoint;
     }
 }
