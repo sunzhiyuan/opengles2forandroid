@@ -142,16 +142,16 @@ public class AirHockeyRenderer implements Renderer {
         textureProgram.setUniforms(modelViewProjectionMatrix, texture);
         table.bindData(textureProgram);
         table.draw();
-        positionObjectInScene(puckPosition.x, puckPosition.y, puckPosition.z);
         colorProgram.useProgram();
+        positionObjectInScene(0f, mallet.height / 2f, -0.4f);
         colorProgram.setUniforms(modelViewProjectionMatrix, 1f, 0f, 0f);
         mallet.bindData(colorProgram);
         mallet.draw();
-        positionObjectInScene(0f, mallet.height / 2f, 0.4f);
-        colorProgram.setUniforms(modelViewProjectionMatrix, 0f, 0f, 1f);
-        mallet.draw();
         positionObjectInScene(blueMalletPosition.x, blueMalletPosition.y,
             blueMalletPosition.z);
+        colorProgram.setUniforms(modelViewProjectionMatrix, 0f, 0f, 1f);
+        mallet.draw();
+        positionObjectInScene(puckPosition.x, puckPosition.y, puckPosition.z);
         colorProgram.setUniforms(modelViewProjectionMatrix, 0.8f, 0.8f, 1f);
         puck.bindData(colorProgram);
         puck.draw();
