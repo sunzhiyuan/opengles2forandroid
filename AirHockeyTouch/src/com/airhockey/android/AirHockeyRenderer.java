@@ -125,13 +125,13 @@ public class AirHockeyRenderer implements Renderer {
         glClear(GL_COLOR_BUFFER_BIT);
         puckPosition = puckPosition.translate(puckVector);
         if (puckPosition.x < leftBound + puck.radius
-            || puckPosition.x > rightBound + puck.radius) {
+            || puckPosition.x > rightBound - puck.radius) {
             puckVector = new Vector(-puckVector.x, puckVector.y, puckVector.z);
             puckVector = puckVector.scale(0.9f);
         }
         if(puckPosition.z<farBound+puck.radius
             || puckPosition.z>nearBound-puck.radius){
-            puckVector = new Vector(puckVector.x, puckVector.y, puckVector.z);
+            puckVector = new Vector(puckVector.x, puckVector.y, -puckVector.z);
             puckVector = puckVector.scale(0.9f);
         }
         puckPosition = new Point(clamp(puckPosition.x, leftBound+puck.radius, rightBound-puck.radius), 
