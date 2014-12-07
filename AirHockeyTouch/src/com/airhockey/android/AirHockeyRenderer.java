@@ -198,12 +198,12 @@ public class AirHockeyRenderer implements Renderer {
             Ray ray = convertNormalized2DPointToRay(normalizedX, normalizedY);
             Plane plane = new Plane(new Point(0, 0, 0), new Vector(0, 1, 0));
             Point touchedPoint = Geometry.intersectionPoint(ray, plane);
+            previousBlueMalletPosition = blueMalletPosition;
             blueMalletPosition =
                 new Point(clamp(touchedPoint.x, leftBound + mallet.radius,
                     rightBound - mallet.radius), mallet.height / 2f, clamp(
                     touchedPoint.z, 0f + mallet.radius, nearBound
                         - mallet.radius));
-            previousBlueMalletPosition = blueMalletPosition;
             float distance =
                 Geometry.vectorBetween(blueMalletPosition, puckPosition)
                     .length();
