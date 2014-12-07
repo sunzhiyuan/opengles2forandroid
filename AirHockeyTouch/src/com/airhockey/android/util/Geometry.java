@@ -117,7 +117,7 @@ public class Geometry {
     }
     public static Point intersectionPoint(Ray ray,Plane plane) {
         Vector rayToPlaneVector = vectorBetween(ray.point, plane.point);
-        float scaleFactor = rayToPlaneVector.dotProduct(plane.normal);
+        float scaleFactor = rayToPlaneVector.dotProduct(plane.normal)/ray.vector.dotProduct(plane.normal);
         Point intersectPoint = ray.point.translate(ray.vector.scale(scaleFactor));
         return intersectPoint;
     }
