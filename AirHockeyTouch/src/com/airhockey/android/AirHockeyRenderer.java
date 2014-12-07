@@ -121,20 +121,23 @@ public class AirHockeyRenderer implements Renderer {
     @Override
     public void onDrawFrame(GL10 gl) {
         // TODO Auto-generated method stub
+
+        glClear(GL_COLOR_BUFFER_BIT);
         puckPosition = puckPosition.translate(puckVector);
         if (puckPosition.x < leftBound + puck.radius
             || puckPosition.x > rightBound + puck.radius) {
             puckVector = new Vector(-puckVector.x, puckVector.y, puckVector.z);
+            puckVector = puckVector.scale(0.9f);
         }
         if(puckPosition.z<farBound+puck.radius
             || puckPosition.z>nearBound-puck.radius){
             puckVector = new Vector(puckVector.x, puckVector.y, puckVector.z);
+            puckVector = puckVector.scale(0.9f);
         }
         puckPosition = new Point(clamp(puckPosition.x, leftBound+puck.radius, rightBound-puck.radius), 
             puckPosition.y,
             clamp(puckPosition.z, farBound+puck.radius, nearBound-puck.radius));
-
-        glClear(GL_COLOR_BUFFER_BIT);
+        puckVector = puckVector.scale(0.99f);
         multiplyMM(viewProjectionMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
         invertM(invertedViewProjectionMatrix, 0, viewProjectionMatrix, 0);
         positionTableInScene();
@@ -155,8 +158,6 @@ public class AirHockeyRenderer implements Renderer {
         colorProgram.setUniforms(modelViewProjectionMatrix, 0.8f, 0.8f, 1f);
         puck.bindData(colorProgram);
         puck.draw();
-        puckVector = puckVector.scale(0.99f);
-        puckVector = puckVector.scale(0.9f);
     }
 
     private Ray convertNormalized2DPointToRay(float normalizedX,
