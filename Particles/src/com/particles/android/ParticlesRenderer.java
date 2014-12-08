@@ -66,21 +66,28 @@ public class ParticlesRenderer implements Renderer{
         globalStartTime = System.nanoTime();
         
         final Vector particleDirection = new Vector(0f, 0.5f, 0f);
-        
+        final float angleVarianceInDegrees = 5f;
+        final float speedVariance = 1f;
         redParticleShooter = new ParticleShooter(
             new Point(-1f, 0f, 0f), 
             particleDirection,                
-            Color.rgb(255, 50, 5));
+            Color.rgb(255, 50, 5),
+            angleVarianceInDegrees,
+            speedVariance);
         
         greenParticleShooter = new ParticleShooter(
             new Point(0f, 0f, 0f), 
             particleDirection,
-            Color.rgb(25, 255, 25));
+            Color.rgb(25, 255, 25),
+            angleVarianceInDegrees,
+            speedVariance);
         
         blueParticleShooter = new ParticleShooter(
             new Point(1f, 0f, 0f), 
             particleDirection,
-            Color.rgb(5, 50, 255));     
+            Color.rgb(5, 50, 255),
+            angleVarianceInDegrees,
+            speedVariance);     
         
 
     }
