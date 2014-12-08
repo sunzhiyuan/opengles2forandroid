@@ -5,6 +5,8 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import static android.opengl.GLES20.*;
 
+import android.R.integer;
+
 import com.particles.android.Constants;
 public class VertexArray {
     private final FloatBuffer floatBuffer;
@@ -20,6 +22,11 @@ public class VertexArray {
         glVertexAttribPointer(attributeLocation, componentCount, GL_FLOAT, false, stride, floatBuffer);
         glEnableVertexAttribArray(attributeLocation);
 
+        floatBuffer.position(0);
+    }
+    public void updateBuffer(float [] vertexData, int start, int count) {
+        floatBuffer.position(start);
+        floatBuffer.put(vertexData,start,count);
         floatBuffer.position(0);
     }
 }
