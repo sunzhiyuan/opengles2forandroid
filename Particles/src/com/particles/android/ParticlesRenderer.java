@@ -60,7 +60,8 @@ public class ParticlesRenderer implements Renderer{
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         // TODO Auto-generated method stub
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-        
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
         particleProgram = new ParticleShaderProgram(context);        
         particleSystem = new ParticleSystem(10000);        
         globalStartTime = System.nanoTime();
