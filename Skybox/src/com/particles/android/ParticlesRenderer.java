@@ -7,6 +7,7 @@
  * Visit http://www.pragmaticprogrammer.com/titles/kbogla for more book information.
  ***/
 package com.particles.android;
+
 import static android.opengl.GLES20.glDisable;
 import static android.opengl.GLES20.GL_BLEND;
 import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
@@ -19,7 +20,7 @@ import static android.opengl.GLES20.glViewport;
 import static android.opengl.Matrix.multiplyMM;
 import static android.opengl.Matrix.setIdentityM;
 import static android.opengl.Matrix.translateM;
-
+import static android.opengl.Matrix.rotateM;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
@@ -61,6 +62,7 @@ public class ParticlesRenderer implements Renderer {
     private SkyboxShaderProgram skyboxProgram;
     private Skybox skybox;
     private int skyboxTexture;
+    private float xRotation, yRotation;
 
     public ParticlesRenderer(Context context) {
         this.context = context;
@@ -124,6 +126,8 @@ public class ParticlesRenderer implements Renderer {
 
     private void drawSkybox() {
         setIdentityM(viewMatrix, 0);
+        rotateM(viewMatrix, 0, -yRotation, 1f, 0f, 0f);
+        rotateM(viewMatrix, 0, -xRotation, 0f, 1f, 0f);
         multiplyMM(viewProjectionMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
         skyboxProgram.useProgram();
         skyboxProgram.setUniforms(viewProjectionMatrix, skyboxTexture);
@@ -139,6 +143,8 @@ public class ParticlesRenderer implements Renderer {
         blueParticleShooter.addParticles(particleSystem, currentTime, 1);
 
         setIdentityM(viewMatrix, 0);
+        rotateM(viewMatrix, 0, -yRotation, 1f, 0f, 0f);
+        rotateM(viewMatrix, 0, -xRotation, 0f, 1f, 0f);
         translateM(viewMatrix, 0, 0f, -1.5f, -5f);
         multiplyMM(viewProjectionMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
 
@@ -153,4 +159,16 @@ public class ParticlesRenderer implements Renderer {
 
         glDisable(GL_BLEND);
     }
+
+    public void handleTouchDrag(float deltaX, float deltaY) {
+        xRotation += deltaX / 16f;
+        yRotation += deltaY / 16f;
+
+        if (yRotation < -90) {
+            yRotation = -90;
+        } else if (yRotation > 90) {
+            yRotation = 90;
+        }
+    }
+
 }

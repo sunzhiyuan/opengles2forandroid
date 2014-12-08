@@ -21,7 +21,7 @@ import android.view.View.OnTouchListener;
 import android.widget.Toast;
 
 public class ParticlesActivity extends Activity {
-    final ParticlesRenderer airHockeyRenderer = new ParticlesRenderer(this);
+    final ParticlesRenderer particlesRenderer = new ParticlesRenderer(this);
     /**
      * Hold a reference to our GLSurfaceView
      */
@@ -57,13 +57,12 @@ public class ParticlesActivity extends Activity {
                     || Build.MODEL.contains("google_sdk")
                     || Build.MODEL.contains("Emulator") || Build.MODEL
                         .contains("Android SDK built for x86")));
-
         if (supportsEs2) {
             // Request an OpenGL ES 2.0 compatible context.
             glSurfaceView.setEGLContextClientVersion(2);
 
             // Assign our renderer.
-            glSurfaceView.setRenderer(airHockeyRenderer);
+            glSurfaceView.setRenderer(particlesRenderer);
             rendererSet = true;
         } else {
             /*
@@ -83,6 +82,37 @@ public class ParticlesActivity extends Activity {
                 Toast.LENGTH_LONG).show();
             return;
         }
+        glSurfaceView.setOnTouchListener(new OnTouchListener() {
+            float previousX, previousY;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event != null) {
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        previousX = event.getX();
+                        previousY = event.getY();
+                    } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                        final float deltaX = event.getX() - previousX;
+                        final float deltaY = event.getY() - previousY;
+
+                        previousX = event.getX();
+                        previousY = event.getY();
+
+                        glSurfaceView.queueEvent(new Runnable() {
+                            @Override
+                            public void run() {
+                                particlesRenderer.handleTouchDrag(deltaX,
+                                    deltaY);
+                            }
+                        });
+                    }
+
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
 
         setContentView(glSurfaceView);
     }
