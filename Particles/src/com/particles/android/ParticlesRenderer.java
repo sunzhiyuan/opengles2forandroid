@@ -37,7 +37,7 @@ import com.particles.android.util.TextureHelper;
 
 public class ParticlesRenderer implements Renderer{
     private final Context context;
-
+    private int texture;
     private final float[] projectionMatrix = new float[16];    
     private final float[] viewMatrix = new float[16];
     private final float[] viewProjectionMatrix = new float[16];
@@ -89,7 +89,7 @@ public class ParticlesRenderer implements Renderer{
             Color.rgb(5, 50, 255),
             angleVarianceInDegrees,
             speedVariance);     
-        
+        texture = TextureHelper.loadTexture(context, R.drawable.particle_texture);
 
     }
 
@@ -135,7 +135,7 @@ public class ParticlesRenderer implements Renderer{
         /*
         particleProgram.setUniforms(viewProjectionMatrix, currentTime);
          */
-        particleProgram.setUniforms(viewProjectionMatrix, currentTime);
+        particleProgram.setUniforms(viewProjectionMatrix, currentTime,texture);
         particleSystem.bindData(particleProgram);
         particleSystem.draw(); 
     }
