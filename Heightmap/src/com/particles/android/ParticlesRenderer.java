@@ -8,29 +8,39 @@
  ***/
 package com.particles.android;
 
-import static android.opengl.GLES20.glDisable;
-import static android.opengl.GLES20.GL_BLEND;
-import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
-import static android.opengl.GLES20.GL_ONE;
 import static android.opengl.GLES20.glBlendFunc;
+import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
+import static android.opengl.GLES20.GL_CULL_FACE;
+import static android.opengl.GLES20.GL_DEPTH_BUFFER_BIT;
+import static android.opengl.GLES20.GL_DEPTH_TEST;
+import static android.opengl.GLES20.GL_BLEND;
+import static android.opengl.GLES20.GL_LESS;
+import static android.opengl.GLES20.GL_ONE;
+import static android.opengl.GLES20.GL_LEQUAL;
+import static android.opengl.GLES20.glDepthFunc;
 import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glClearColor;
+import static android.opengl.GLES20.glDisable;
 import static android.opengl.GLES20.glEnable;
 import static android.opengl.GLES20.glViewport;
 import static android.opengl.Matrix.multiplyMM;
+import static android.opengl.Matrix.rotateM;
 import static android.opengl.Matrix.setIdentityM;
 import static android.opengl.Matrix.translateM;
-import static android.opengl.Matrix.rotateM;
+import static android.opengl.Matrix.scaleM;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
-
+import static android.opengl.GLES20.glDepthMask;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.opengl.GLSurfaceView.Renderer;
 
+import com.particles.android.objects.Heightmap;
 import com.particles.android.objects.ParticleShooter;
 import com.particles.android.objects.ParticleSystem;
 import com.particles.android.objects.Skybox;
+import com.particles.android.programs.HeightmapShaderProgram;
 import com.particles.android.programs.ParticleShaderProgram;
 import com.particles.android.programs.SkyboxShaderProgram;
 import com.particles.android.util.Geometry.Point;
@@ -43,7 +53,13 @@ public class ParticlesRenderer implements Renderer {
     private int particleTexture;
     private final float[] projectionMatrix = new float[16];
     private final float[] viewMatrix = new float[16];
-    private final float[] viewProjectionMatrix = new float[16];
+    private final float[] modelMatrix = new float[16];
+    private final float[] viewMatrixForSkybox = new float[16];
+
+    private final float[] tempMatrix = new float[16];
+    private final float[] modelViewProjectionMatrix = new float[16];
+    private HeightmapShaderProgram heightmapProgram;
+    private Heightmap heightmap;
     /*
      * // Maximum saturation and value. private final float[] hsv = {0f, 1f,
      * 1f};
@@ -72,8 +88,15 @@ public class ParticlesRenderer implements Renderer {
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         // TODO Auto-generated method stub
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+//        glEnable(GL_DEPTH_TEST);
+//        glEnable(GL_CULL_FACE);
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
+        heightmapProgram = new HeightmapShaderProgram(context);
+        heightmap =
+            new Heightmap(((BitmapDrawable) context.getResources().getDrawable(
+                R.drawable.heightmap)).getBitmap());
+
         particleProgram = new ParticleShaderProgram(context);
         particleSystem = new ParticleSystem(10000);
         globalStartTime = System.nanoTime();
@@ -107,32 +130,35 @@ public class ParticlesRenderer implements Renderer {
     public void onSurfaceChanged(GL10 gl, int width, int height) {
         // TODO Auto-generated method stub
         glViewport(0, 0, width, height);
-
         MatrixHelper.perspectiveM(projectionMatrix, 45, (float) width
-            / (float) height, 1f, 10f);
-
-        setIdentityM(viewMatrix, 0);
-        translateM(viewMatrix, 0, 0f, -1.5f, -5f);
-        multiplyMM(viewProjectionMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
+            / (float) height, 1f, 100f);
+        /*
+         * MatrixHelper.perspectiveM(projectionMatrix, 45, (float) width /
+         * (float) height, 1f, 10f);
+         */
+        updateViewMatrices();
     }
 
     @Override
     public void onDrawFrame(GL10 gl) {
         // TODO Auto-generated method stub
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         drawSkybox();
+        drawHeightmap();
         drawParticles();
     }
 
     private void drawSkybox() {
-        setIdentityM(viewMatrix, 0);
-        rotateM(viewMatrix, 0, -yRotation, 1f, 0f, 0f);
-        rotateM(viewMatrix, 0, -xRotation, 0f, 1f, 0f);
-        multiplyMM(viewProjectionMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
+        setIdentityM(modelMatrix, 0);
+        updateMvpMatrixForSkybox();
+
+//        glDepthFunc(GL_LEQUAL); // This avoids problems with the skybox itself
+                                // getting clipped.
         skyboxProgram.useProgram();
-        skyboxProgram.setUniforms(viewProjectionMatrix, skyboxTexture);
+        skyboxProgram.setUniforms(modelViewProjectionMatrix, skyboxTexture);
         skybox.bindData(skyboxProgram);
         skybox.draw();
+//        glDepthFunc(GL_LESS);
     }
 
     private void drawParticles() {
@@ -142,22 +168,33 @@ public class ParticlesRenderer implements Renderer {
         greenParticleShooter.addParticles(particleSystem, currentTime, 1);
         blueParticleShooter.addParticles(particleSystem, currentTime, 1);
 
-        setIdentityM(viewMatrix, 0);
-        rotateM(viewMatrix, 0, -yRotation, 1f, 0f, 0f);
-        rotateM(viewMatrix, 0, -xRotation, 0f, 1f, 0f);
-        translateM(viewMatrix, 0, 0f, -1.5f, -5f);
-        multiplyMM(viewProjectionMatrix, 0, projectionMatrix, 0, viewMatrix, 0);
+        setIdentityM(modelMatrix, 0);
+        updateMvpMatrix();
 
+//        glDepthMask(false);
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
 
         particleProgram.useProgram();
-        particleProgram.setUniforms(viewProjectionMatrix, currentTime,
+        particleProgram.setUniforms(modelViewProjectionMatrix, currentTime,
             particleTexture);
         particleSystem.bindData(particleProgram);
         particleSystem.draw();
 
         glDisable(GL_BLEND);
+//        glDepthMask(true);
+    }
+
+    private void updateViewMatrices() {
+        setIdentityM(viewMatrix, 0);
+        rotateM(viewMatrix, 0, -yRotation, 1f, 0f, 0f);
+        rotateM(viewMatrix, 0, -xRotation, 0f, 1f, 0f);
+        System.arraycopy(viewMatrix, 0, viewMatrixForSkybox, 0,
+            viewMatrix.length);
+
+        // We want the translation to apply to the regular view matrix, and not
+        // the skybox.
+        translateM(viewMatrix, 0, 0, -1.5f, -5f);
     }
 
     public void handleTouchDrag(float deltaX, float deltaY) {
@@ -169,6 +206,30 @@ public class ParticlesRenderer implements Renderer {
         } else if (yRotation > 90) {
             yRotation = 90;
         }
+        updateViewMatrices();
     }
 
+    private void drawHeightmap() {
+        setIdentityM(modelMatrix, 0);
+        // Expand the heightmap's dimensions, but don't expand the height as
+        // much so that we don't get insanely tall mountains.
+        scaleM(modelMatrix, 0, 100f, 10f, 100f);
+        updateMvpMatrix();
+        heightmapProgram.useProgram();
+        heightmapProgram.setUniforms(modelViewProjectionMatrix);
+        heightmap.bindData(heightmapProgram);
+        heightmap.draw();
+    }
+
+    private void updateMvpMatrix() {
+        multiplyMM(tempMatrix, 0, viewMatrix, 0, modelMatrix, 0);
+        multiplyMM(modelViewProjectionMatrix, 0, projectionMatrix, 0,
+            tempMatrix, 0);
+    }
+
+    private void updateMvpMatrixForSkybox() {
+        multiplyMM(tempMatrix, 0, viewMatrixForSkybox, 0, modelMatrix, 0);
+        multiplyMM(modelViewProjectionMatrix, 0, projectionMatrix, 0,
+            tempMatrix, 0);
+    }
 }
