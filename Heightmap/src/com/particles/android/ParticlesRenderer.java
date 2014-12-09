@@ -88,8 +88,8 @@ public class ParticlesRenderer implements Renderer {
     public void onSurfaceCreated(GL10 gl, EGLConfig config) {
         // TODO Auto-generated method stub
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-//        glEnable(GL_DEPTH_TEST);
-//        glEnable(GL_CULL_FACE);
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
         heightmapProgram = new HeightmapShaderProgram(context);
@@ -143,8 +143,8 @@ public class ParticlesRenderer implements Renderer {
     public void onDrawFrame(GL10 gl) {
         // TODO Auto-generated method stub
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        drawSkybox();
         drawHeightmap();
+        drawSkybox();
         drawParticles();
     }
 
@@ -152,13 +152,13 @@ public class ParticlesRenderer implements Renderer {
         setIdentityM(modelMatrix, 0);
         updateMvpMatrixForSkybox();
 
-//        glDepthFunc(GL_LEQUAL); // This avoids problems with the skybox itself
+        glDepthFunc(GL_LEQUAL); // This avoids problems with the skybox itself
                                 // getting clipped.
         skyboxProgram.useProgram();
         skyboxProgram.setUniforms(modelViewProjectionMatrix, skyboxTexture);
         skybox.bindData(skyboxProgram);
         skybox.draw();
-//        glDepthFunc(GL_LESS);
+        glDepthFunc(GL_LESS);
     }
 
     private void drawParticles() {
@@ -171,7 +171,7 @@ public class ParticlesRenderer implements Renderer {
         setIdentityM(modelMatrix, 0);
         updateMvpMatrix();
 
-//        glDepthMask(false);
+        glDepthMask(false);
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
 
@@ -182,7 +182,7 @@ public class ParticlesRenderer implements Renderer {
         particleSystem.draw();
 
         glDisable(GL_BLEND);
-//        glDepthMask(true);
+        glDepthMask(true);
     }
 
     private void updateViewMatrices() {
